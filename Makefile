@@ -1,6 +1,8 @@
 version := 1.0
 branch:= master
-create := $(sh date +%Y-%m-%d)
+create := $(shell date +%Y-%m-%d)
+
+PATH_DELIM ?= ;
 
 GOCMD = go
 
@@ -12,11 +14,16 @@ INSTALL_DIR := $(INSTALL) -m 755 -d
 MKDIR ?= $(INSTALL_DIR)
 RMDIR ?= rm -vr
 
+COPY ?= cp
+COPY_R := $(COPY) -r
+
 EXISTS_DIR ?= test -d
 EXISTS_FILR ?= test -f
 
 BASE := $(PWD)
+PKG_BASE := $(shell echo $(GOPATH) | cut -d'$(PATH_DELIM)' -f1)
 
+ARTIFACTS_DIR := $(BASE)/pkg
 VOLATILE_DIR := $(BASE)/build
 VOLATILE_lib_DIR := $(VOLATILE_DIR)/lib
 VOLATILE_bin_DIR := $(VOLATILE_DIR)/bin
@@ -104,7 +111,7 @@ deps:
 		-d \
 		.
 
-test-deps:
+deps-test:
 	@cd $(TESTS_DIR) && \
 	GOPATH="$(VENDOR_DIR)" \
 	$(GOCMD) get \
@@ -120,7 +127,8 @@ clean:
 	@$(EXISTS_DIR) "$(DIST_DIR)" && $(RMDIR) $(DIST_DIR) || true
 
 .PHONY: default all
-.PHONY: $(SOURCE_targets) $(EXAMPLE_targets)
-.PHONY: build volatile clean dist
-.PHONY: deps test-deps format
-.PHONE: library examples test
+.PHONY: $(SOURCE_targets) $(SOURCE_install_targets)
+.PHONY: $(EXAMPLE_targets) $(TEST_targets)
+.PHONY: install build volatile clean dist
+.PHONY: deps deps-test deps-install format
+.PHONY: library examples test
