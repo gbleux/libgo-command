@@ -119,11 +119,7 @@ clean:
 	@$(EXISTS_DIR) "$(VOLATILE_DIR)" && $(RMDIR) $(VOLATILE_DIR) || true
 	@$(EXISTS_DIR) "$(DIST_DIR)" && $(RMDIR) $(DIST_DIR) || true
 
-env:
-	@GOPATH=$(SOURCES_DIR):$(EXAMPLES_DIR) \
-	$(GOCMD) env
-
-.PHONY: default all env
+.PHONY: default all
 .PHONY: $(SOURCE_targets) $(EXAMPLE_targets)
 .PHONY: build volatile clean dist
 .PHONY: deps test-deps format
